@@ -11,8 +11,8 @@ const ExitSvg = () => {
       fill="none"
       style={{
         position: "absolute",
-        top: 54,
-        left: 335,
+        top: -36,
+        right: 10,
       }}
     >
       <Path

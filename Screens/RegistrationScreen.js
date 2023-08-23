@@ -13,7 +13,7 @@ import { Formik } from "formik";
 import SvgComponent from "../assets/inputSvg";
 import SvgComponentPhoto from "../assets/photoSvg";
 
-const RegistrationScreen = () => {
+const RegistrationScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -25,6 +25,7 @@ const RegistrationScreen = () => {
             initialValues={{ displayName: "", email: "", password: "" }}
             onSubmit={async (values) => {
               console.log(values);
+              navigation.navigate("Home");
             }}
           >
             {({ handleChange, handleBlur, handleSubmit, values }) => (
@@ -69,7 +70,12 @@ const RegistrationScreen = () => {
                   <Text style={styles.buttonTitle}>Зареєстуватися</Text>
                 </Pressable>
 
-                <Text style={styles.formFooter}>Вже є акаунт? Увійти</Text>
+                <Text
+                  style={styles.formFooter}
+                  onPress={() => navigation.navigate("LoginScreen")}
+                >
+                  Вже є акаунт? Увійти
+                </Text>
                 <Pressable style={styles.showPassword}>
                   <Text style={{ fontSize: 16 }}>Показати</Text>
                 </Pressable>
@@ -139,7 +145,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     marginLeft: "auto",
     marginRight: "auto",
-    marginTop: 60,
+    marginTop: 20,
   },
   buttonTitle: {
     fontSize: 16,

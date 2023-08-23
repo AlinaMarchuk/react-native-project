@@ -12,7 +12,7 @@ import {
 import SvgComponent from "../assets/inputSvg";
 import { Formik } from "formik";
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -24,6 +24,7 @@ const LoginScreen = () => {
             initialValues={{ email: "", password: "" }}
             onSubmit={async (values) => {
               console.log(values);
+              navigation.navigate("Home");
             }}
           >
             {({ handleChange, handleBlur, handleSubmit, values }) => (
@@ -57,7 +58,10 @@ const LoginScreen = () => {
                   <Text style={styles.buttonTitle}>Увійти</Text>
                 </Pressable>
 
-                <Text style={styles.formFooter}>
+                <Text
+                  style={styles.formFooter}
+                  onPress={() => navigation.navigate("RegistrationScreen")}
+                >
                   Немає аккаунту ? Зареєстуватися
                 </Text>
                 <Pressable style={styles.showPassword}>

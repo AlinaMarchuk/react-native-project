@@ -11,8 +11,13 @@ import {
 } from "react-native";
 import SvgComponent from "../assets/inputSvg";
 import { Formik } from "formik";
+import { useDispatch } from "react-redux";
+import { loginDB } from "../firebase/operations";
+import { saveUser } from "../redux/rootReducer/rootSlice";
 
 const LoginScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -23,8 +28,16 @@ const LoginScreen = ({ navigation }) => {
           <Formik
             initialValues={{ email: "", password: "" }}
             onSubmit={async (values) => {
-              console.log(values);
-              navigation.navigate("Home");
+              try {
+                console.log(values);
+                const user = await loginDB(values);
+                const { email, displayName } = user;
+                console.log("USER:", user);
+                dispatch(saveUser({ email, displayName }));
+                navigation.navigate("Home");
+              } catch (error) {
+                console.log("Login error", error);
+              }
             }}
           >
             {({ handleChange, handleBlur, handleSubmit, values }) => (

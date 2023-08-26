@@ -12,8 +12,13 @@ import {
 import { Formik } from "formik";
 import SvgComponent from "../assets/inputSvg";
 import SvgComponentPhoto from "../assets/photoSvg";
+import { useDispatch } from "react-redux";
+import { registerDB, updateUserProfile } from "../firebase/operations";
+import { saveUser, updateUser } from "../redux/rootReducer/rootSlice";
 
 const RegistrationScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -24,8 +29,17 @@ const RegistrationScreen = ({ navigation }) => {
           <Formik
             initialValues={{ displayName: "", email: "", password: "" }}
             onSubmit={async (values) => {
-              console.log(values);
-              navigation.navigate("Home");
+              try {
+                console.log(values);
+                const user = await registerDB(values);
+                dispatch(saveUser(user._tokenResponse));
+                console.log("user:", user._tokenResponse);
+                await updateUserProfile({ displayName: values.displayName });
+                dispatch(updateUser({ displayName: values.displayName }));
+                navigation.navigate("Home");
+              } catch (error) {
+                console.log("Registration error", error);
+              }
             }}
           >
             {({ handleChange, handleBlur, handleSubmit, values }) => (

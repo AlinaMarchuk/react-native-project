@@ -4,11 +4,16 @@ import CreatePostsScreen from "../Screens/CreatePostsScreen";
 import ProfileScreen from "../Screens/ProfileScreen";
 import PostsScreen from "../Screens/PostsScreen";
 import AddSvg from "../assets/addSvg";
+import { auth } from "../firebase/config";
+import useAuth from "../hooks/useAuth";
 
-const Home = () => {
+const Home = ({ navigation }) => {
   const Tab = createBottomTabNavigator();
+  const user = auth.currentUser;
+  console.log("homeUser", user);
+  const { isAuth } = useAuth();
 
-  return (
+  return isAuth ? (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
@@ -42,6 +47,8 @@ const Home = () => {
         }}
       />
     </Tab.Navigator>
+  ) : (
+    <>{navigation.navigate("LoginScreen")}</>
   );
 };
 

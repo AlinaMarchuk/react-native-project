@@ -20,7 +20,10 @@ import { Formik } from "formik";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { geoConverter } from "../helpers/geoConverter";
-import axios from "axios";
+import uploadImageAsync from "../helpers/uploadImage";
+import { addPublicationDB } from "../firebase/operations";
+import { addPub } from "../redux/rootReducer/rootSlice";
+import { useDispatch } from "react-redux";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -29,6 +32,7 @@ const CreatePostsScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [location, setLocation] = useState(null);
   const [realAdress, setRealAdress] = useState("");
+  const dispatch = useDispatch();
 
   console.log("location:", location);
 
@@ -136,13 +140,22 @@ const CreatePostsScreen = ({ navigation }) => {
         <Formik
           initialValues={{ title: "" }}
           onSubmit={async ({ title }) => {
-            const data = {
-              title,
-              image,
-              location,
-            };
-            console.log(data);
-            navigation.navigate("PostsScreen");
+            try {
+              const imgUrl = await uploadImageAsync(image);
+              const data = {
+                title,
+                image: imgUrl,
+                location,
+                city: realAdress,
+              };
+              console.log("imgURL:", imgUrl);
+              const newDoc = await addPublicationDB(data);
+              dispatch(addPub(data));
+              console.log("newDoc:", newDoc);
+              navigation.navigate("PostsScreen");
+            } catch (error) {
+              console.log("Create Post error", error);
+            }
           }}
         >
           {({ handleChange, handleBlur, handleSubmit, values }) => (
@@ -175,7 +188,7 @@ const CreatePostsScreen = ({ navigation }) => {
                 style={styles.formButtonNonSubmit}
                 onPress={handleSubmit}
               >
-                <Text style={styles.buttonTitle}>Опубліковати</Text>
+                <Text style={styles.buttonTitle}>Опублікувати</Text>
               </Pressable>
             </>
           )}
